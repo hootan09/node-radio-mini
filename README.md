@@ -1,12 +1,14 @@
 # Node.js radio mini
 
+## Orginal Repo: https://github.com/DarkMannn/node-radio-mini
+
 ## Description
 This app is a radio streaming solution made entirely in Node.js. It features a terminal GUI (there are sections for the playlist, the song queue, the currently playing song and for the keyboard controls) and a http endpoint at which the songs are going to get streamed.
 
 Purpose of the whole project was to have fun and experiment. Production ready radio server should use Shoutcast / Icecast (or similar) for a robust streaming server.
 
 ## Requirements
-You must have `ffprobe` installed, which is part of `ffmpeg`, on your operating system in order for this app to work, since the javascript code relies on that binary to exist.
+-- only put your songs in ./Songs folder
 
 ## Installation
 Clone this repository. Go into the root and run:
@@ -33,7 +35,7 @@ If you don't have any songs queued up, the last song will be played again.
 
 This app is also serving a single html page that will automatically connect to the streaming endpoint shown above. The page is served at `http://localhost:8080`. You can see how the page appears on the browser in the next screenshot:
 
-![screenshot](/screenshot2.png)
+![screenshot](/screenshot2.jpg)
 
 ### Commands
 

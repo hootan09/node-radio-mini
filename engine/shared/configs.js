@@ -91,10 +91,11 @@ const Configs = {
             scrollable: true,
             label: 'Controls',
             style: {
-                fg: 'grey',
+                fg: 'white',
                 bg: 'black',
                 border: {
-                    fg: '#000000'
+                    fg: '#000000',
+                    fg: 'white',
                 }
             }
         }

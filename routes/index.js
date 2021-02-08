@@ -1,47 +1,28 @@
-const { queue } = require('../engine');
+const express = require('express');
+const { queue, playlist } = require('../engine');
 
-const plugin = {
-    name: 'streamServer',
-    register: async (server) => {
+const router = express.Router();
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            handler: (_, h) => h.file('index.html')
-        });
+router.get('/',(req,res) =>{
+    res.sendFile(`${__dirname}/../public/index.html`);
+})
 
-        server.route({
-            method: 'GET',
-            path: '/{filename}',
-            handler: {
-                file: (req) => req.params.filename
-            }
-        });
+router.get('/stream', (req,res)=>{
+    const { id, responseSink } = queue.makeResponseSink();
+    req.app.sinkId = id;
+    res.type('audio/mpeg').status(200);
+    responseSink.pipe(res);
+    req.on('close', function () {
+        queue.removeResponseSink(req.app.sinkId);
+        })
+})
 
-        server.route({
-            method: 'GET',
-            path: '/stream',
-            handler: (request, h) => {
-                
-                const { id, responseSink } = queue.makeResponseSink();
-                request.app.sinkId = id;
-                return h.response(responseSink).type('audio/mpeg');
-            },
-            options: {
-                ext: {
-                    onPreResponse: {
-                        method: (request, h) => {
-                            
-                            request.events.once('disconnect', () => {
-                                queue.removeResponseSink(request.app.sinkId);
-                            });
-                            return h.continue;
-                        }
-                    }
-                }
-            }
-        });
-    }
-};
+router.get('/songdetail', async(req,res)=>{
+    res.status(200).json({
+        songName:  playlist.getFocusedSong(),
+        songImage: await queue.getSongImage() || ''
+        
+    })
+})
 
-module.exports = plugin;
+module.exports = router;

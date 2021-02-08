@@ -1,9 +1,15 @@
 const Fs = require('fs');
 const { extname } = require('path');
+const {config} = require('../config');
 
-const _readDir = () => Fs.readdirSync(process.cwd(), { withFileTypes: true });
+
+const _readDir = () => Fs.readdirSync(this.getSongsPAth(), { withFileTypes: true });
 const _isMp3 = item => item.isFile && extname(item.name) === '.mp3';
 
+exports.getSongsPAth = () => {
+    return process.cwd() + config.SONGSPATH;
+
+} 
 exports.readSong = () => _readDir().filter(_isMp3)[0].name;
 exports.readSongs = () => _readDir().filter(_isMp3).map((songItem) => songItem.name);
 

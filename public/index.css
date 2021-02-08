@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(73, 153, 100)
+    background-color: rgb(130, 130, 130)
 }
 
 #main {
@@ -10,14 +10,19 @@ body {
     margin: 10% 30% 0% 30%;
     border: 2px solid black;
     border-radius: 25px;
-    background-color: rgb(156, 156, 156);
+    background-color: rgb(208, 208, 208);
 }
 
 #title {
     font-family: "Comic Sans MS", "Comic Sans", cursive;
     font-weight: bold;
+    text-align: center;
+    font-size: small;
 }
 
 #logo {
-    margin-bottom: 20px
+    margin-bottom: 20px;
+    width: 60%;
+    object-fit: cover;
 }
+

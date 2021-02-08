@@ -1,31 +1,30 @@
 #!/usr/bin/env node
 
 require('./config');
-const Hapi = require('@hapi/hapi');
-const StaticFilePlugin = require('@hapi/inert');
-const Path = require('path');
-const Routes = require('./routes');
+const express = require('express');
 const Engine = require('./engine');
 
-void async function startApp() {
+const app = express();
 
-    try {
-        const server = Hapi.server({
-            port: process.env.PORT || 8080,
-            host: process.env.HOST || 'localhost',
-            compression: false,
-            routes: { files: { relativeTo: Path.join(__dirname, 'public') } }
-        });
-        await server.register(StaticFilePlugin);
-        await server.register(Routes);
+// Set Static Folder
+app.use(express.static(`${__dirname}/public`));
 
-        Engine.start();
-        await server.start();
-        console.log(`Server running at: ${server.info.uri}`);
-    }
-    catch (err) {
-        console.log(`Server errored with: ${err}`);
-        console.error(err.stack);
-        process.exit(1);
-    }
-}();
+//WEB route
+app.use('/', require('./routes/index'));
+
+let port = process.env.PORT || 8080;
+app.listen(port, async ()=>{
+  await Engine.start();
+    console.log(`\n Server running at port: ${port}`);
+})
+
+process.on("uncaughtException", (err) => {
+    console.log(`Uncaught: ${err.message}`);
+    process.exit(1);
+  });
+  
+  // Handle unhandled promice rejections
+  process.on("unhandledRejection", (err) => {
+    console.log(`Error: ${err.message}`);
+    process.exit(1);
+  });

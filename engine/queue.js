@@ -5,7 +5,7 @@ const { PassThrough } = require('stream');
 
 const Throttle = require('throttle');
 const NeoBlessed = require('neo-blessed');
-const { ffprobeSync } = require('@dropb/ffprobe');
+const mm = require('music-metadata');
 
 const AbstractClasses = require('./shared/abstract-classes');
 const Utils = require('../utils');
@@ -49,35 +49,46 @@ class Queue extends AbstractClasses.TerminalItemBox {
         }
     }
 
-    _getBitRate(song) {
+    async _getBitRate(song) {
         try {
-            const bitRate = ffprobeSync(Path.join(process.cwd(), song)).format.bit_rate;
-            return parseInt(bitRate);
+            const metadata =await mm.parseFile(Path.join(Utils.getSongsPAth(), song))
+            return parseInt(metadata.format.bitrate);
+
         }
         catch (err) {
             return 128000; // reasonable default
         }
     }
 
-    _playLoop() {
+    async getSongImage() {
+        try {
+            const metadata =await mm.parseFile(Path.join(Utils.getSongsPAth(), this._currentSong))
+            return metadata.common.picture[0].data.toString('base64');
+        }
+        catch (err) {
+            return null; // reasonable default
+        }
+    }
+
+    async _playLoop() {
 
         this._currentSong = this._songs.length
             ? this.removeFromQueue({ fromTop: true })
             : this._currentSong;
-        const bitRate = this._getBitRate(this._currentSong);
+        const bitRate = await this._getBitRate(this._currentSong);
 
-        const songReadable = Fs.createReadStream(this._currentSong);
+        const songReadable = Fs.createReadStream(Utils.getSongsPAth() + this._currentSong);
 
         const throttleTransformable = new Throttle(bitRate / 8);
         throttleTransformable.on('data', (chunk) => this._broadcastToEverySink(chunk));
-        throttleTransformable.on('end', () => this._playLoop());
+        throttleTransformable.on('end', async() => await this._playLoop());
 
         this.stream.emit('play', this._currentSong);
         songReadable.pipe(throttleTransformable);
     }
 
-    startStreaming() {
-        this._playLoop();
+    async startStreaming() {
+        await this._playLoop();
     }
 
     _createBoxChild(content) {

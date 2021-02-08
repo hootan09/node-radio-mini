@@ -101,14 +101,14 @@ const _addPlaylistAndQueueListeners = () => {
     });
 };
 
-exports.start = () => {
+exports.start = async() => {
 
     _addPlaylistAndQueueListeners();
     playlist.fillWithItems(Utils.readSongs());
     view.appendBoxes([playlist.box, queue.box, nowPlaying.box, controls.box]);
     view.render();
     queue.init();
-    queue.startStreaming();
+    await queue.startStreaming();
 };
 
 exports.queue = queue;

@@ -11,3 +11,7 @@ exports.keys = {
     FOCUS_QUEUE: process.env.FOCUS_QUEUE || 'q',
     FOCUS_PLAYLIST: process.env.FOCUS_PLAYLIST || 'p'
 };
+
+exports.config = {
+    SONGSPATH: process.env.SONGSPATH || '/Songs/',
+}
