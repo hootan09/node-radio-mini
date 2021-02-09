@@ -70,12 +70,23 @@ class Queue extends AbstractClasses.TerminalItemBox {
         }
     }
 
+    async getSongDuration(song) {
+        try {
+            const metadata =await mm.parseFile(Path.join(Utils.getSongsPAth(), song))
+            return (metadata.format.duration).toFixed(2);
+        }
+        catch (err) {
+            return null; // reasonable default
+        }
+    }
+
     async _playLoop() {
 
         this._currentSong = this._songs.length
             ? this.removeFromQueue({ fromTop: true })
             : this._currentSong;
         const bitRate = await this._getBitRate(this._currentSong);
+        const duration = await this.getSongDuration(this._currentSong);
 
         const songReadable = Fs.createReadStream(Utils.getSongsPAth() + this._currentSong);
 
@@ -83,7 +94,7 @@ class Queue extends AbstractClasses.TerminalItemBox {
         throttleTransformable.on('data', (chunk) => this._broadcastToEverySink(chunk));
         throttleTransformable.on('end', async() => await this._playLoop());
 
-        this.stream.emit('play', this._currentSong);
+        this.stream.emit('play', {song: this._currentSong, duration: duration});
         songReadable.pipe(throttleTransformable);
     }
 

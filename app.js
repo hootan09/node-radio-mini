@@ -2,9 +2,11 @@
 
 require('./config');
 const express = require('express');
+const compression = require('compression');
 const Engine = require('./engine');
 
 const app = express();
+app.use(compression())
 
 // Set Static Folder
 app.use(express.static(`${__dirname}/public`));

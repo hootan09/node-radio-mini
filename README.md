@@ -2,6 +2,8 @@
 
 ## Orginal Repo: https://github.com/DarkMannn/node-radio-mini
 
+### note: max stream Connection is 6 or less
+
 ## Description
 This app is a radio streaming solution made entirely in Node.js. It features a terminal GUI (there are sections for the playlist, the song queue, the currently playing song and for the keyboard controls) and a http endpoint at which the songs are going to get streamed.
 

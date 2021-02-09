@@ -93,11 +93,18 @@ const _addPlaylistAndQueueListeners = () => {
     /**
      * listeners for the queue streams (queue's stream events)
      */
-    queue.stream.on('play', (song) => {
+    let timer;
+    queue.stream.on('play', (data) => {
+        clearInterval(timer);
+        let second = 0;
 
         playlist.focus();
-        nowPlaying.createBoxChildAndAppend(song);
-        view.render();
+        timer = setInterval(() => {
+            
+            nowPlaying.createBoxChildAndAppend(`${data.song} [${Utils.TimeFormat(data.duration)}] ${Utils.TimeFormat(second)}`);
+            view.render();
+            second++;
+        }, 1000);
     });
 };
 
